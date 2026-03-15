@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-Day Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --border: #e0e0e0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #888888;
+    --text-muted: #b0b0b0;
+    --accent: #1a1a1a;
+  }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 48px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .header .line {
+    width: 32px;
+    height: 1px;
+    background: var(--border);
+    margin: 0 auto;
+  }
+
+  /* Date Input */
+  .input-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .input-section label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .input-section input {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 6px 0;
+    width: 160px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-section input:focus {
+    border-color: var(--text-primary);
+  }
+
+  .input-section input::-webkit-calendar-picker-indicator {
+    opacity: 0.3;
+    cursor: pointer;
+  }
+
+  /* Event Name */
+  .event-name-section {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .event-name-input {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    text-align: center;
+    outline: none;
+    width: 100%;
+    padding: 4px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .event-name-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* D-Day Badge */
+  .dday-badge {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .dday-badge span {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -1px;
+  }
+
+  .dday-badge .suffix {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    margin-left: 4px;
+  }
+
+  /* Timer Grid */
+  .timer-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .timer-unit {
+    text-align: center;
+    padding: 20px 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: transform 0.15s ease;
+  }
+
+  .timer-unit:hover {
+    transform: translateY(-2px);
+  }
+
+  .timer-value {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer-label {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Separator dots between units */
+  .timer-unit:not(:last-child) {
+    position: relative;
+  }
+
+  /* Progress bar */
+  .progress-section {
+    margin-bottom: 16px;
+  }
+
+  .progress-bar-track {
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--text-primary);
+    border-radius: 1px;
+    transition: width 1s linear;
+    width: 0%;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Past state */
+  .past .dday-badge span {
+    color: var(--text-muted);
+  }
+
+  .past .timer-value {
+    color: var(--text-muted);
+  }
+
+  /* Today state */
+  .today .dday-badge span {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    body { padding: 32px 16px; }
+    .timer-value { font-size: 22px; }
+    .timer-unit { padding: 14px 2px; }
+    .dday-badge span { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+  <div class="header">
+    <h1>Countdown</h1>
+    <div class="line"></div>
+  </div>
+
+  <div class="input-section">
+    <label>Target</label>
+    <input type="date" id="targetDate" />
+  </div>
+
+  <div class="event-name-section">
+    <input
+      type="text"
+      class="event-name-input"
+      id="eventName"
+      placeholder="이벤트 이름 입력"
+      maxlength="40"
+    />
+  </div>
+
+  <div class="dday-badge" id="ddayBadge">
+    <span id="ddayText">—</span>
+  </div>
+
+  <div class="timer-grid" id="timerGrid">
+    <div class="timer-unit">
+      <div class="timer-value" id="months">—</div>
+      <div class="timer-label">Months</div>
+    </div>
+    <div class="timer-unit">
+      <div class="timer-value" id="days">—</div>
+      <div class="timer-label">Days</div>
+    </div>
+    <div class="timer-unit">
+      <div class="timer-value" id="hours">—</div>
+      <div class="timer-label">Hours</div>
+    </div>
+    <div class="timer-unit">
+      <div class="timer-value" id="minutes">—</div>
+      <div class="timer-label">Min</div>
+    </div>
+    <div class="timer-unit">
+      <div class="timer-value" id="seconds">—</div>
+      <div class="timer-label">Sec</div>
+    </div>
+  </div>
+
+  <div class="progress-section" id="progressSection" style="display:none;">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-info">
+      <span id="progressStart">—</span>
+      <span id="progressPercent">0%</span>
+      <span id="progressEnd">—</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const targetInput = document.getElementById('targetDate');
+  const eventNameInput = document.getElementById('eventName');
+  const ddayText = document.getElementById('ddayText');
+  const app = document.getElementById('app');
+
+  const monthsEl = document.getElementById('months');
+  const daysEl = document.getElementById('days');
+  const hoursEl = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
+
+  const progressSection = document.getElementById('progressSection');
+  const progressFill = document.getElementById('progressFill');
+  const progressStart = document.getElementById('progressStart');
+  const progressEnd = document.getElementById('progressEnd');
+  const progressPercent = document.getElementById('progressPercent');
+
+  let createdDate = null;
+  let intervalId = null;
+
+  // Load saved state
+  const saved = localStorage.getItem('dday_data');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      if (data.target) targetInput.value = data.target;
+      if (data.created) createdDate = new Date(data.created);
+      if (data.eventName) eventNameInput.value = data.eventName;
+    } catch(e) {}
+  }
+
+  function save() {
+    const data = {
+      target: targetInput.value,
+      created: createdDate ? createdDate.toISOString() : new Date().toISOString(),
+      eventName: eventNameInput.value
+    };
+    localStorage.setItem('dday_data', JSON.stringify(data));
+  }
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function getMonthsDiff(from, to) {
+    let months = (to.getFullYear() - from.getFullYear()) * 12;
+    months += to.getMonth() - from.getMonth();
+
+    const fromDay = from.getDate() + from.getHours()/24 + from.getMinutes()/1440 + from.getSeconds()/86400;
+    const toDay = to.getDate() + to.getHours()/24 + to.getMinutes()/1440 + to.getSeconds()/86400;
+
+    if (toDay < fromDay) months--;
+
+    return Math.max(0, months);
+  }
+
+  function getRemainder(from, to, monthsOffset) {
+    const adjusted = new Date(from);
+    adjusted.setMonth(adjusted.getMonth() + monthsOffset);
+
+    let diff = to - adjusted;
+    if (diff < 0) diff = 0;
+
+    const totalSec = Math.floor(diff / 1000);
+    const d = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+
+    return { d, h, m, s };
+  }
+
+  function getTotalDays(from, to) {
+    return Math.ceil((to - from) / (1000 * 60 * 60 * 24));
+  }
+
+  function update() {
+    const val = targetInput.value;
+    if (!val) return;
+
+    const target = new Date(val + 'T00:00:00');
+    const now = new Date();
+
+    // D-Day calculation (date only)
+    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetDate = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+    const diffDays = Math.round((targetDate - todayDate) / (1000 * 60 * 60 * 24));
+
+    app.classList.remove('past', 'today');
+
+    if (diffDays > 0) {
+      ddayText.innerHTML = `D-${diffDays}<span class="suffix">days left</span>`;
+
+      const months = getMonthsDiff(now, target);
+      const rem = getRemainder(now, target, months);
+
+      monthsEl.textContent = pad(months);
+      daysEl.textContent = pad(rem.d);
+      hoursEl.textContent = pad(rem.h);
+      minutesEl.textContent = pad(rem.m);
+      secondsEl.textContent = pad(rem.s);
+
+      // Progress
+      if (createdDate) {
+        const total = target - createdDate;
+        const elapsed = now - createdDate;
+        const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+        progressSection.style.display = 'block';
+        progressFill.style.width = pct.toFixed(2) + '%';
+        progressPercent.textContent = pct.toFixed(1) + '%';
+        const opts = { month: 'short', day: 'numeric' };
+        progressStart.textContent = createdDate.toLocaleDateString('ko-KR', opts);
+        progressEnd.textContent = target.toLocaleDateString('ko-KR', opts);
+      }
+    } else if (diffDays === 0) {
+      app.classList.add('today');
+      ddayText.innerHTML = `D-Day`;
+      monthsEl.textContent = '00';
+      daysEl.textContent = '00';
+      hoursEl.textContent = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      progressSection.style.display = 'none';
+    } else {
+      app.classList.add('past');
+      ddayText.innerHTML = `D+${Math.abs(diffDays)}<span class="suffix">days passed</span>`;
+
+      const months = getMonthsDiff(target, now);
+      const rem = getRemainder(target, now, months);
+
+      monthsEl.textContent = pad(months);
+      daysEl.textContent = pad(rem.d);
+      hoursEl.textContent = pad(rem.h);
+      minutesEl.textContent = pad(rem.m);
+      secondsEl.textContent = pad(rem.s);
+      progressSection.style.display = 'none';
+    }
+  }
+
+  targetInput.addEventListener('change', () => {
+    if (!createdDate) createdDate = new Date();
+    save();
+    update();
+  });
+
+  eventNameInput.addEventListener('input', save);
+
+  // Start
+  if (targetInput.value) update();
+  intervalId = setInterval(update, 1000);
+</script>
+
+</body>
+</html>
