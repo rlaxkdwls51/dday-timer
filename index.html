@@ -4,252 +4,361 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>D-Day Timer</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #fafafa;
+    --bg: #fbfbfd;
     --surface: #ffffff;
-    --border: #e0e0e0;
-    --text-primary: #1a1a1a;
-    --text-secondary: #888888;
-    --text-muted: #b0b0b0;
-    --accent: #1a1a1a;
+    --surface-hover: #f5f5f7;
+    --border: rgba(0,0,0,0.08);
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-muted: #86868b;
+    --blue-start: rgba(0,122,255,0.1);
+    --blue-end: #007AFF;
+    --radius: 14px;
   }
 
   body {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 48px 20px;
+    padding: 60px 20px;
     -webkit-font-smoothing: antialiased;
   }
 
   .container {
     width: 100%;
-    max-width: 560px;
-    animation: fadeIn 0.6s ease-out;
+    max-width: 640px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
+  @keyframes slideUp {
     to { opacity: 1; transform: translateY(0); }
   }
 
   /* Header */
   .header {
     text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .header h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .header .line {
-    width: 32px;
-    height: 1px;
-    background: var(--border);
-    margin: 0 auto;
-  }
-
-  /* Date Input */
-  .input-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
     margin-bottom: 48px;
   }
 
-  .input-section label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  .header h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+  }
+
+  /* Input Area */
+  .input-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s ease;
+  }
+
+  .input-group:focus-within {
+    border-color: rgba(10,132,255,0.4);
+  }
+
+  .input-group label {
+    font-size: 13px;
+    font-weight: 500;
     color: var(--text-muted);
     flex-shrink: 0;
   }
 
-  .input-section input {
-    font-family: 'DM Mono', monospace;
+  .input-group input {
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 500;
     color: var(--text-primary);
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--border);
-    padding: 6px 0;
-    width: 160px;
-    text-align: center;
     outline: none;
-    transition: border-color 0.2s;
+    width: 140px;
   }
 
-  .input-section input:focus {
-    border-color: var(--text-primary);
+  .input-group input[type="time"] {
+    width: 100px;
   }
 
-  .input-section input::-webkit-calendar-picker-indicator {
-    opacity: 0.3;
+  .input-group input::-webkit-calendar-picker-indicator {
+    filter: none;
+    opacity: 0.4;
     cursor: pointer;
   }
 
   /* Event Name */
   .event-name-section {
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .event-name-input {
-    font-family: 'Syne', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
     color: var(--text-primary);
     background: transparent;
     border: none;
     text-align: center;
     outline: none;
     width: 100%;
-    padding: 4px 0;
-    letter-spacing: 0.5px;
+    padding: 8px 0;
+    letter-spacing: -0.01em;
   }
 
   .event-name-input::placeholder {
     color: var(--text-muted);
-    font-weight: 400;
+    font-weight: 500;
   }
 
   /* D-Day Badge */
   .dday-badge {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 44px;
   }
 
-  .dday-badge span {
-    font-family: 'Syne', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
+  .dday-number {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
     color: var(--text-primary);
-    letter-spacing: -1px;
+    line-height: 1.1;
   }
 
-  .dday-badge .suffix {
+  .dday-suffix {
+    display: block;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
     color: var(--text-muted);
-    letter-spacing: 2px;
-    margin-left: 4px;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
   }
 
   /* Timer Grid */
   .timer-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 40px;
+    gap: 10px;
+    margin-bottom: 48px;
   }
 
   .timer-unit {
     text-align: center;
-    padding: 20px 4px;
     background: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px 4px 18px;
     border: 1px solid var(--border);
-    border-radius: 4px;
-    transition: transform 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
   }
 
-  .timer-unit:hover {
-    transform: translateY(-2px);
+  /* Flip Container */
+  .flip-container {
+    height: 48px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
   }
 
-  .timer-value {
-    font-size: 28px;
-    font-weight: 500;
-    line-height: 1;
+  .flip-digit {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--text-primary);
-    margin-bottom: 8px;
     font-variant-numeric: tabular-nums;
+    transition: none;
+  }
+
+  .flip-digit.current {
+    top: 0;
+  }
+
+  .flip-digit.entering {
+    top: 48px;
+  }
+
+  .flip-animate .flip-digit.current {
+    animation: flipOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .flip-animate .flip-digit.entering {
+    animation: flipIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes flipOut {
+    0% { transform: translateY(0) rotateX(0); opacity: 1; }
+    100% { transform: translateY(-100%) rotateX(-30deg); opacity: 0; }
+  }
+
+  @keyframes flipIn {
+    0% { transform: translateY(0) rotateX(30deg); opacity: 0; }
+    100% { transform: translateY(-100%) rotateX(0); opacity: 1; }
   }
 
   .timer-label {
-    font-size: 9px;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     color: var(--text-muted);
+    text-transform: uppercase;
   }
 
-  /* Separator dots between units */
-  .timer-unit:not(:last-child) {
+  /* Colon separators */
+  .timer-grid-wrapper {
     position: relative;
   }
 
-  /* Progress bar */
+  /* Progress Section */
   .progress-section {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  .progress-bar-track {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .progress-bar-track.visible {
+    opacity: 1;
+  }
+
+  .progress-info {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .progress-info.visible {
+    opacity: 1;
+  }
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .progress-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .input-group-sm {
+    padding: 6px 12px !important;
+  }
+
+  .input-group-sm label {
+    font-size: 11px !important;
+  }
+
+  .input-group-sm input {
+    font-size: 13px !important;
+    width: 120px !important;
   }
 
   .progress-bar-track {
     width: 100%;
-    height: 2px;
-    background: var(--border);
-    border-radius: 1px;
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
     overflow: hidden;
+    border: 1px solid var(--border);
   }
 
   .progress-bar-fill {
     height: 100%;
-    background: var(--text-primary);
-    border-radius: 1px;
-    transition: width 1s linear;
+    border-radius: 3px;
+    transition: width 1s linear, background 2s ease;
     width: 0%;
+    background: linear-gradient(90deg, rgba(0,122,255,0.2), rgba(0,122,255,0.4));
   }
 
   .progress-info {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--text-muted);
   }
 
-  /* Past state */
-  .past .dday-badge span {
+  .progress-percent {
+    color: var(--blue-end);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* States */
+  .past .dday-number {
     color: var(--text-muted);
   }
 
-  .past .timer-value {
-    color: var(--text-muted);
+  .today .dday-number {
+    background: linear-gradient(135deg, #0A84FF, #5E5CE6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: glow 2.5s ease-in-out infinite;
   }
 
-  /* Today state */
-  .today .dday-badge span {
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  @keyframes glow {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.85; filter: brightness(1.3); }
   }
 
   /* Responsive */
   @media (max-width: 480px) {
-    body { padding: 32px 16px; }
-    .timer-value { font-size: 22px; }
-    .timer-unit { padding: 14px 2px; }
-    .dday-badge span { font-size: 28px; }
+    body { padding: 40px 16px; }
+    .dday-number { font-size: 42px; }
+    .flip-container { height: 36px; }
+    .flip-digit { height: 36px; font-size: 28px; }
+    .timer-unit { padding: 18px 2px 14px; border-radius: 10px; }
+    .timer-grid { gap: 6px; }
+    @keyframes flipOut {
+      0% { transform: translateY(0) rotateX(0); opacity: 1; }
+      100% { transform: translateY(-36px) rotateX(-30deg); opacity: 0; }
+    }
+    @keyframes flipIn {
+      0% { transform: translateY(0) rotateX(30deg); opacity: 0; }
+      100% { transform: translateY(-36px) rotateX(0); opacity: 1; }
+    }
   }
 </style>
 </head>
@@ -258,12 +367,17 @@
 <div class="container" id="app">
   <div class="header">
     <h1>Countdown</h1>
-    <div class="line"></div>
   </div>
 
-  <div class="input-section">
-    <label>Target</label>
-    <input type="date" id="targetDate" />
+  <div class="input-area">
+    <div class="input-group">
+      <label>날짜</label>
+      <input type="date" id="targetDate" />
+    </div>
+    <div class="input-group">
+      <label>시간</label>
+      <input type="time" id="targetTime" value="00:00" />
+    </div>
   </div>
 
   <div class="event-name-section">
@@ -277,55 +391,68 @@
   </div>
 
   <div class="dday-badge" id="ddayBadge">
-    <span id="ddayText">—</span>
+    <div class="dday-number" id="ddayText">—</div>
   </div>
 
   <div class="timer-grid" id="timerGrid">
     <div class="timer-unit">
-      <div class="timer-value" id="months">—</div>
+      <div class="flip-container" id="flip-months">
+        <div class="flip-digit current">—</div>
+      </div>
       <div class="timer-label">Months</div>
     </div>
     <div class="timer-unit">
-      <div class="timer-value" id="days">—</div>
+      <div class="flip-container" id="flip-days">
+        <div class="flip-digit current">—</div>
+      </div>
       <div class="timer-label">Days</div>
     </div>
     <div class="timer-unit">
-      <div class="timer-value" id="hours">—</div>
+      <div class="flip-container" id="flip-hours">
+        <div class="flip-digit current">—</div>
+      </div>
       <div class="timer-label">Hours</div>
     </div>
     <div class="timer-unit">
-      <div class="timer-value" id="minutes">—</div>
+      <div class="flip-container" id="flip-minutes">
+        <div class="flip-digit current">—</div>
+      </div>
       <div class="timer-label">Min</div>
     </div>
     <div class="timer-unit">
-      <div class="timer-value" id="seconds">—</div>
+      <div class="flip-container" id="flip-seconds">
+        <div class="flip-digit current">—</div>
+      </div>
       <div class="timer-label">Sec</div>
     </div>
   </div>
 
-  <div class="progress-section" id="progressSection" style="display:none;">
+  <div class="progress-section" id="progressSection">
+    <div class="progress-header">
+      <span class="progress-title">Progress</span>
+      <div class="input-group input-group-sm">
+        <label>시작일</label>
+        <input type="date" id="startDate" />
+      </div>
+    </div>
     <div class="progress-bar-track">
       <div class="progress-bar-fill" id="progressFill"></div>
     </div>
     <div class="progress-info">
       <span id="progressStart">—</span>
-      <span id="progressPercent">0%</span>
+      <span class="progress-percent" id="progressPercent">0%</span>
       <span id="progressEnd">—</span>
     </div>
   </div>
 </div>
 
 <script>
-  const targetInput = document.getElementById('targetDate');
+  const targetDateInput = document.getElementById('targetDate');
+  const targetTimeInput = document.getElementById('targetTime');
+  const startDateInput = document.getElementById('startDate');
   const eventNameInput = document.getElementById('eventName');
   const ddayText = document.getElementById('ddayText');
   const app = document.getElementById('app');
-
-  const monthsEl = document.getElementById('months');
-  const daysEl = document.getElementById('days');
-  const hoursEl = document.getElementById('hours');
-  const minutesEl = document.getElementById('minutes');
-  const secondsEl = document.getElementById('seconds');
 
   const progressSection = document.getElementById('progressSection');
   const progressFill = document.getElementById('progressFill');
@@ -333,139 +460,186 @@
   const progressEnd = document.getElementById('progressEnd');
   const progressPercent = document.getElementById('progressPercent');
 
-  let createdDate = null;
-  let intervalId = null;
+  const flipIds = ['flip-months', 'flip-days', 'flip-hours', 'flip-minutes', 'flip-seconds'];
+  const prevValues = { months: null, days: null, hours: null, minutes: null, seconds: null };
 
   // Load saved state
-  const saved = localStorage.getItem('dday_data');
-  if (saved) {
-    try {
+  try {
+    const saved = localStorage.getItem('dday_data_v3');
+    if (saved) {
       const data = JSON.parse(saved);
-      if (data.target) targetInput.value = data.target;
-      if (data.created) createdDate = new Date(data.created);
+      if (data.targetDate) targetDateInput.value = data.targetDate;
+      if (data.targetTime) targetTimeInput.value = data.targetTime;
+      if (data.startDate) startDateInput.value = data.startDate;
       if (data.eventName) eventNameInput.value = data.eventName;
-    } catch(e) {}
-  }
+    }
+  } catch(e) {}
 
   function save() {
-    const data = {
-      target: targetInput.value,
-      created: createdDate ? createdDate.toISOString() : new Date().toISOString(),
+    localStorage.setItem('dday_data_v3', JSON.stringify({
+      targetDate: targetDateInput.value,
+      targetTime: targetTimeInput.value,
+      startDate: startDateInput.value,
       eventName: eventNameInput.value
-    };
-    localStorage.setItem('dday_data', JSON.stringify(data));
+    }));
   }
 
-  function pad(n) {
-    return String(n).padStart(2, '0');
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function flipTo(containerId, newVal, key) {
+    if (prevValues[key] === newVal) return;
+    prevValues[key] = newVal;
+
+    const container = document.getElementById(containerId);
+    const currentEl = container.querySelector('.flip-digit.current');
+
+    if (currentEl.textContent === '—') {
+      currentEl.textContent = newVal;
+      return;
+    }
+
+    container.classList.remove('flip-animate');
+
+    const enteringEl = document.createElement('div');
+    enteringEl.className = 'flip-digit entering';
+    enteringEl.textContent = newVal;
+    container.appendChild(enteringEl);
+
+    void container.offsetWidth;
+    container.classList.add('flip-animate');
+
+    setTimeout(() => {
+      container.classList.remove('flip-animate');
+      currentEl.textContent = newVal;
+      currentEl.style.transform = '';
+      currentEl.style.opacity = '';
+      if (enteringEl.parentNode) enteringEl.remove();
+    }, 420);
   }
 
   function getMonthsDiff(from, to) {
-    let months = (to.getFullYear() - from.getFullYear()) * 12;
-    months += to.getMonth() - from.getMonth();
-
-    const fromDay = from.getDate() + from.getHours()/24 + from.getMinutes()/1440 + from.getSeconds()/86400;
-    const toDay = to.getDate() + to.getHours()/24 + to.getMinutes()/1440 + to.getSeconds()/86400;
-
-    if (toDay < fromDay) months--;
-
+    let months = (to.getFullYear() - from.getFullYear()) * 12 + to.getMonth() - from.getMonth();
+    const fDay = from.getDate() + from.getHours()/24 + from.getMinutes()/1440 + from.getSeconds()/86400;
+    const tDay = to.getDate() + to.getHours()/24 + to.getMinutes()/1440 + to.getSeconds()/86400;
+    if (tDay < fDay) months--;
     return Math.max(0, months);
   }
 
-  function getRemainder(from, to, monthsOffset) {
-    const adjusted = new Date(from);
-    adjusted.setMonth(adjusted.getMonth() + monthsOffset);
-
-    let diff = to - adjusted;
-    if (diff < 0) diff = 0;
-
-    const totalSec = Math.floor(diff / 1000);
-    const d = Math.floor(totalSec / 86400);
-    const h = Math.floor((totalSec % 86400) / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
-
-    return { d, h, m, s };
+  function getRemainder(from, to, monthsOff) {
+    const adj = new Date(from);
+    adj.setMonth(adj.getMonth() + monthsOff);
+    let diff = Math.max(0, to - adj);
+    const s = Math.floor(diff / 1000);
+    return {
+      d: Math.floor(s / 86400),
+      h: Math.floor((s % 86400) / 3600),
+      m: Math.floor((s % 3600) / 60),
+      s: s % 60
+    };
   }
 
-  function getTotalDays(from, to) {
-    return Math.ceil((to - from) / (1000 * 60 * 60 * 24));
+  function getStartDate() {
+    const val = startDateInput.value;
+    if (!val) return null;
+    return new Date(val + 'T00:00:00');
+  }
+
+  function updateProgress(target) {
+    const start = getStartDate();
+    const track = document.querySelector('.progress-bar-track');
+    const info = document.querySelector('.progress-info');
+    if (!start) {
+      track.classList.remove('visible');
+      info.classList.remove('visible');
+      return;
+    }
+    track.classList.add('visible');
+    info.classList.add('visible');
+
+    const now = new Date();
+    const total = target - start;
+    const elapsed = now - start;
+    const clampedPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+    progressFill.style.width = clampedPct.toFixed(2) + '%';
+
+    const alpha1 = (0.15 + clampedPct / 100 * 0.35).toFixed(2);
+    const alpha2 = (0.3 + clampedPct / 100 * 0.7).toFixed(2);
+    progressFill.style.background = `linear-gradient(90deg, rgba(10,132,255,${alpha1}), rgba(10,132,255,${alpha2}))`;
+
+    progressPercent.textContent = clampedPct.toFixed(1) + '%';
+    const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+    progressStart.textContent = start.toLocaleDateString('ko-KR', opts);
+    progressEnd.textContent = target.toLocaleDateString('ko-KR', opts);
   }
 
   function update() {
-    const val = targetInput.value;
-    if (!val) return;
+    const dateVal = targetDateInput.value;
+    if (!dateVal) return;
 
-    const target = new Date(val + 'T00:00:00');
+    const timeVal = targetTimeInput.value || '00:00';
+    const target = new Date(dateVal + 'T' + timeVal + ':00');
     const now = new Date();
 
-    // D-Day calculation (date only)
     const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const targetDate = new Date(target.getFullYear(), target.getMonth(), target.getDate());
-    const diffDays = Math.round((targetDate - todayDate) / (1000 * 60 * 60 * 24));
+    const targetDateOnly = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+    const diffDays = Math.round((targetDateOnly - todayDate) / 86400000);
 
     app.classList.remove('past', 'today');
 
-    if (diffDays > 0) {
-      ddayText.innerHTML = `D-${diffDays}<span class="suffix">days left</span>`;
+    if (now < target) {
+      ddayText.innerHTML = 'D−' + diffDays;
+      const ddaySuffix = document.createElement('span');
+      ddaySuffix.className = 'dday-suffix';
+      ddaySuffix.textContent = 'days left';
+      ddayText.appendChild(ddaySuffix);
 
-      const months = getMonthsDiff(now, target);
-      const rem = getRemainder(now, target, months);
+      const mo = getMonthsDiff(now, target);
+      const rem = getRemainder(now, target, mo);
+      flipTo('flip-months', pad(mo), 'months');
+      flipTo('flip-days', pad(rem.d), 'days');
+      flipTo('flip-hours', pad(rem.h), 'hours');
+      flipTo('flip-minutes', pad(rem.m), 'minutes');
+      flipTo('flip-seconds', pad(rem.s), 'seconds');
 
-      monthsEl.textContent = pad(months);
-      daysEl.textContent = pad(rem.d);
-      hoursEl.textContent = pad(rem.h);
-      minutesEl.textContent = pad(rem.m);
-      secondsEl.textContent = pad(rem.s);
-
-      // Progress
-      if (createdDate) {
-        const total = target - createdDate;
-        const elapsed = now - createdDate;
-        const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-        progressSection.style.display = 'block';
-        progressFill.style.width = pct.toFixed(2) + '%';
-        progressPercent.textContent = pct.toFixed(1) + '%';
-        const opts = { month: 'short', day: 'numeric' };
-        progressStart.textContent = createdDate.toLocaleDateString('ko-KR', opts);
-        progressEnd.textContent = target.toLocaleDateString('ko-KR', opts);
-      }
-    } else if (diffDays === 0) {
+      updateProgress(target);
+    } else if (diffDays === 0 && now >= targetDateOnly && now < new Date(targetDateOnly.getTime() + 86400000)) {
       app.classList.add('today');
-      ddayText.innerHTML = `D-Day`;
-      monthsEl.textContent = '00';
-      daysEl.textContent = '00';
-      hoursEl.textContent = '00';
-      minutesEl.textContent = '00';
-      secondsEl.textContent = '00';
-      progressSection.style.display = 'none';
+      ddayText.textContent = 'D-Day';
+      flipTo('flip-months', '00', 'months');
+      flipTo('flip-days', '00', 'days');
+      flipTo('flip-hours', '00', 'hours');
+      flipTo('flip-minutes', '00', 'minutes');
+      flipTo('flip-seconds', '00', 'seconds');
+      document.querySelector('.progress-bar-track').classList.remove('visible');
+      document.querySelector('.progress-info').classList.remove('visible');
     } else {
       app.classList.add('past');
-      ddayText.innerHTML = `D+${Math.abs(diffDays)}<span class="suffix">days passed</span>`;
+      const pastDays = Math.abs(diffDays);
+      ddayText.innerHTML = 'D+' + pastDays;
+      const ddaySuffix = document.createElement('span');
+      ddaySuffix.className = 'dday-suffix';
+      ddaySuffix.textContent = 'days passed';
+      ddayText.appendChild(ddaySuffix);
 
-      const months = getMonthsDiff(target, now);
-      const rem = getRemainder(target, now, months);
-
-      monthsEl.textContent = pad(months);
-      daysEl.textContent = pad(rem.d);
-      hoursEl.textContent = pad(rem.h);
-      minutesEl.textContent = pad(rem.m);
-      secondsEl.textContent = pad(rem.s);
-      progressSection.style.display = 'none';
+      const mo = getMonthsDiff(target, now);
+      const rem = getRemainder(target, now, mo);
+      flipTo('flip-months', pad(mo), 'months');
+      flipTo('flip-days', pad(rem.d), 'days');
+      flipTo('flip-hours', pad(rem.h), 'hours');
+      flipTo('flip-minutes', pad(rem.m), 'minutes');
+      flipTo('flip-seconds', pad(rem.s), 'seconds');
+      document.querySelector('.progress-bar-track').classList.remove('visible');
+      document.querySelector('.progress-info').classList.remove('visible');
     }
   }
 
-  targetInput.addEventListener('change', () => {
-    if (!createdDate) createdDate = new Date();
-    save();
-    update();
-  });
-
+  targetDateInput.addEventListener('change', () => { save(); update(); });
+  targetTimeInput.addEventListener('change', () => { save(); update(); });
+  startDateInput.addEventListener('change', () => { save(); update(); });
   eventNameInput.addEventListener('input', save);
 
-  // Start
-  if (targetInput.value) update();
-  intervalId = setInterval(update, 1000);
+  if (targetDateInput.value) update();
+  setInterval(update, 1000);
 </script>
 
 </body>
